@@ -74,38 +74,41 @@ class CameraManager {
     }
     
     update() {
-        const playerPosition = this.player.getPosition();
-        const playerDirection = this.player.getDirection();
-        
-        // Mettre à jour la caméra première personne
-        this.firstPersonCamera.position.set(
-            playerPosition.x,
-            playerPosition.y + 0.8, // Légèrement plus haut que la position du joueur
-            playerPosition.z
-        );
-        
-        // Appliquer la rotation pitch uniquement à la caméra, pas au joueur
-        this.firstPersonCamera.rotation.set(this.pitch, this.yaw, 0, 'YXZ');
-        
-        // Mettre à jour la caméra troisième personne
-        const offsetDirection = new THREE.Vector3(
-            Math.sin(this.yaw) * Math.cos(this.pitch),
-            Math.sin(this.pitch),
-            Math.cos(this.yaw) * Math.cos(this.pitch)
-        );
-        
-        const offset = offsetDirection.multiplyScalar(-this.thirdPersonDistance);
-        this.thirdPersonCamera.position.set(
-            playerPosition.x + offset.x,
-            playerPosition.y + this.thirdPersonHeight + offset.y,
-            playerPosition.z + offset.z
-        );
-        
-        this.thirdPersonCamera.lookAt(
-            playerPosition.x,
-            playerPosition.y + 1,
-            playerPosition.z
-        );
+        // Ne pas mettre à jour la rotation de la caméra si une animation est en cours
+        if (this.player && (!window.game || !window.game.animationInProgress)) {
+            const playerPosition = this.player.getPosition();
+            const playerDirection = this.player.getDirection();
+            
+            // Mettre à jour la caméra première personne
+            this.firstPersonCamera.position.set(
+                playerPosition.x,
+                playerPosition.y + 0.8, // Légèrement plus haut que la position du joueur
+                playerPosition.z
+            );
+            
+            // Appliquer la rotation pitch uniquement à la caméra, pas au joueur
+            this.firstPersonCamera.rotation.set(this.pitch, this.yaw, 0, 'YXZ');
+            
+            // Mettre à jour la caméra troisième personne
+            const offsetDirection = new THREE.Vector3(
+                Math.sin(this.yaw) * Math.cos(this.pitch),
+                Math.sin(this.pitch),
+                Math.cos(this.yaw) * Math.cos(this.pitch)
+            );
+            
+            const offset = offsetDirection.multiplyScalar(-this.thirdPersonDistance);
+            this.thirdPersonCamera.position.set(
+                playerPosition.x + offset.x,
+                playerPosition.y + this.thirdPersonHeight + offset.y,
+                playerPosition.z + offset.z
+            );
+            
+            this.thirdPersonCamera.lookAt(
+                playerPosition.x,
+                playerPosition.y + 1,
+                playerPosition.z
+            );
+        }
     }
     
     updateAspect(aspect) {
